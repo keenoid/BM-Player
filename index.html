@@ -56,6 +56,30 @@
             --color-accent: #6a4a56;
         }
 
+        .theme-lavender {
+            --color-bg: #ddd4e8;
+            --color-dark: #6a5a7a;
+            --color-mid: #a48fb5;
+            --color-light: #ede8f5;
+            --color-accent: #5a4a6a;
+        }
+
+        .theme-charcoal {
+            --color-bg: #c8cac8;
+            --color-dark: #3a3a3a;
+            --color-mid: #7a7a7a;
+            --color-light: #e2e4e2;
+            --color-accent: #2a2a2a;
+        }
+
+        .theme-amber {
+            --color-bg: #e8dcb8;
+            --color-dark: #7a6a3a;
+            --color-mid: #b5a572;
+            --color-light: #f5f0dc;
+            --color-accent: #6a5a2a;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -71,31 +95,28 @@
             justify-content: center;
             padding: 20px;
             transition: background 0.5s ease;
+            overflow: hidden;
         }
 
         .container {
-            perspective: 1500px;
             width: 100%;
             max-width: 420px;
-        }
-
-        .device {
+            height: 85vh;
+            max-height: 700px;
             position: relative;
-            width: 100%;
-            aspect-ratio: 3/4;
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
         }
 
-        .device.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .face {
-            position: absolute;
-            width: 100%;
+        .screens-wrapper {
+            display: flex;
+            width: 300%;
             height: 100%;
-            backface-visibility: hidden;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .screen {
+            width: 33.333%;
+            flex-shrink: 0;
             background: var(--color-light);
             border-radius: 30px;
             box-shadow: 
@@ -104,22 +125,32 @@
             padding: 30px;
             display: flex;
             flex-direction: column;
+            position: relative;
+            margin: 0 10px;
         }
 
-        .face-back {
-            transform: rotateY(180deg);
+        /* SCREEN 1 - PLAYER */
+        .loop-info {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        /* FRONT FACE */
-        .loop-indicator {
-            position: absolute;
-            top: 25px;
-            left: 30px;
-            font-size: 18px;
+        .loop-number {
+            font-size: 48px;
             color: var(--color-dark);
             font-weight: 300;
             font-family: 'Courier New', monospace;
             opacity: 0.6;
+            line-height: 1;
+        }
+
+        .loop-name {
+            font-size: 13px;
+            color: var(--color-mid);
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.7;
         }
 
         .speaker-area {
@@ -219,34 +250,6 @@
             border: none;
         }
 
-        .flip-button {
-            position: absolute;
-            bottom: 25px;
-            right: 25px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--color-mid);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: var(--color-light);
-            transition: all 0.2s;
-            opacity: 0.5;
-        }
-
-        .flip-button:hover {
-            opacity: 0.8;
-            transform: scale(1.1);
-        }
-
-        .flip-button:active {
-            transform: scale(0.95);
-        }
-
         .random-button {
             position: absolute;
             bottom: 25px;
@@ -281,13 +284,25 @@
             to { transform: rotate(360deg); }
         }
 
-        /* BACK FACE */
-        .back-header {
-            text-align: center;
-            margin-bottom: 20px;
+        .theme-indicator {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-bg), var(--color-dark));
+            opacity: 0.4;
+            pointer-events: none;
         }
 
-        .back-title {
+        /* SCREEN 2 - TRACK LIST */
+        .track-list-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .track-list-title {
             font-size: 14px;
             color: var(--color-dark);
             text-transform: uppercase;
@@ -296,7 +311,7 @@
             opacity: 0.7;
         }
 
-        .back-subtitle {
+        .track-list-subtitle {
             font-size: 9px;
             color: var(--color-mid);
             margin-top: 5px;
@@ -369,6 +384,16 @@
             opacity: 0.5;
         }
 
+        .loop-tile:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .loop-tile.active {
+            background: var(--color-dark);
+            opacity: 1;
+        }
+
         .loop-tile-number {
             font-size: 16px;
             font-weight: 600;
@@ -390,16 +415,6 @@
             max-width: 100%;
         }
 
-        .loop-tile:hover {
-            opacity: 0.8;
-            transform: scale(1.05);
-        }
-
-        .loop-tile.active {
-            background: var(--color-dark);
-            opacity: 1;
-        }
-
         .loop-tile.favorited::after {
             content: '★';
             position: absolute;
@@ -414,45 +429,34 @@
             color: var(--color-light);
         }
 
-        .color-themes {
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-dark);
+            opacity: 0.5;
+            font-size: 12px;
+        }
+
+        /* SCREEN 3 - LOAD FILES */
+        .load-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .load-title {
+            font-size: 14px;
+            color: var(--color-dark);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 300;
+            opacity: 0.7;
+        }
+
+        .file-section {
+            flex: 1;
             display: flex;
-            gap: 10px;
-            justify-content: center;
-            padding: 15px 0;
-            border-top: 1px solid var(--color-mid);
-            opacity: 0.6;
-        }
-
-        .color-dot {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-
-        .color-dot:hover {
-            transform: scale(1.2);
-        }
-
-        .color-dot.active {
-            border-color: var(--color-dark);
-        }
-
-        .color-dot.sage { background: linear-gradient(135deg, #d4e4d8, #5a7063); }
-        .color-dot.gray { background: linear-gradient(135deg, #d9d9d6, #5a5a58); }
-        .color-dot.cream { background: linear-gradient(135deg, #e8dcc8, #7a6f5d); }
-        .color-dot.blue { background: linear-gradient(135deg, #d4dfe8, #5a6d7a); }
-        .color-dot.rose { background: linear-gradient(135deg, #e8d4dc, #7a5a66); }
-
-        .file-upload-section {
-            padding: 15px 0;
-            border-top: 1px solid var(--color-mid);
-        }
-
-        .file-upload-section input {
-            display: none;
+            flex-direction: column;
         }
 
         .dropzone {
@@ -463,6 +467,7 @@
             cursor: pointer;
             transition: all 0.3s;
             opacity: 0.4;
+            margin-bottom: 20px;
         }
 
         .dropzone:hover {
@@ -481,53 +486,14 @@
             margin-top: 5px;
         }
 
-        .dropzone-hint {
+        .file-upload-section input {
             display: none;
         }
 
-        /* Full-screen drag overlay */
-        .drag-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--color-accent);
-            opacity: 0;
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            transition: opacity 0.2s;
-        }
-
-        .drag-overlay.active {
-            opacity: 0.95;
-            pointer-events: all;
-        }
-
-        .drag-overlay-content {
-            text-align: center;
-            color: var(--color-light);
-        }
-
-        .drag-overlay-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
-
-        .drag-overlay-text {
-            font-size: 24px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-weight: 300;
-        }
-
         .file-list-section {
-            margin-top: 15px;
-            max-height: 120px;
+            flex: 1;
             overflow-y: auto;
+            margin-bottom: 20px;
         }
 
         .file-list-section::-webkit-scrollbar {
@@ -571,52 +537,145 @@
         }
 
         .file-count {
-            margin-top: 10px;
-            font-size: 10px;
-            color: var(--color-dark);
-            opacity: 0.7;
             text-align: center;
+            font-size: 11px;
+            color: var(--color-dark);
+            opacity: 0.6;
+            margin-bottom: 20px;
         }
 
-        .empty-state {
-            grid-column: 1 / -1;
+        .color-themes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 15px 0;
+            border-top: 1px solid var(--color-mid);
+            opacity: 0.6;
+        }
+
+        .color-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .color-dot:hover {
+            transform: scale(1.15);
+        }
+
+        .color-dot.active {
+            border-color: var(--color-dark);
+            transform: scale(1.1);
+        }
+
+        .color-dot.sage { background: linear-gradient(135deg, #d4e4d8, #5a7063); }
+        .color-dot.gray { background: linear-gradient(135deg, #d9d9d6, #5a5a58); }
+        .color-dot.cream { background: linear-gradient(135deg, #e8dcc8, #7a6f5d); }
+        .color-dot.blue { background: linear-gradient(135deg, #d4dfe8, #5a6d7a); }
+        .color-dot.rose { background: linear-gradient(135deg, #e8d4dc, #7a5a66); }
+        .color-dot.lavender { background: linear-gradient(135deg, #ddd4e8, #6a5a7a); }
+        .color-dot.charcoal { background: linear-gradient(135deg, #c8cac8, #3a3a3a); }
+        .color-dot.amber { background: linear-gradient(135deg, #e8dcb8, #7a6a3a); }
+
+        /* Navigation */
+        .nav-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-mid);
+            opacity: 0.3;
+            transition: all 0.3s;
+        }
+
+        .nav-dot.active {
+            opacity: 0.7;
+            transform: scale(1.3);
+        }
+
+        /* Full-screen drag overlay */
+        .drag-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--color-accent);
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.2s;
+        }
+
+        .drag-overlay.active {
+            opacity: 0.95;
+            pointer-events: all;
+        }
+
+        .drag-overlay-content {
             text-align: center;
-            padding: 40px 20px;
-            color: var(--color-dark);
-            opacity: 0.5;
-            font-size: 12px;
+            color: var(--color-light);
+        }
+
+        .drag-overlay-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .drag-overlay-text {
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 300;
         }
 
         @media (max-width: 480px) {
             .speaker-grill {
-                width: 160px;
-                height: 160px;
+                width: 180px;
+                height: 180px;
             }
             
             .loop-grid {
-                gap: 4px;
+                gap: 6px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="drag-overlay" id="dragOverlay">
-            <div class="drag-overlay-content">
-                <div class="drag-overlay-icon">📁</div>
-                <div class="drag-overlay-text">Drop Files Here</div>
-            </div>
+    <div class="drag-overlay" id="dragOverlay">
+        <div class="drag-overlay-content">
+            <div class="drag-overlay-icon">📁</div>
+            <div class="drag-overlay-text">Drop Files Here</div>
         </div>
-        
-        <div class="device" id="device">
-            <!-- FRONT FACE -->
-            <div class="face face-front">
-                <div class="loop-indicator" id="loopIndicator">--</div>
-                
+    </div>
+
+    <div class="container">
+        <div class="screens-wrapper" id="screensWrapper">
+            <!-- SCREEN 1: PLAYER -->
+            <div class="screen screen-player">
+                <div class="loop-info">
+                    <div class="loop-number" id="loopNumber">--</div>
+                    <div class="loop-name" id="loopName">NO FILE LOADED</div>
+                </div>
+
                 <div class="speaker-area" id="speakerArea">
-                    <div class="speaker-grill" id="speakerGrill">
-                        <!-- Speaker circles generated by JS -->
-                    </div>
+                    <div class="speaker-grill" id="speakerGrill"></div>
                 </div>
 
                 <div class="volume-section">
@@ -625,14 +684,14 @@
                 </div>
 
                 <button class="random-button" id="randomButton" title="Random">🎲</button>
-                <button class="flip-button" id="flipToBack" title="Settings">⚙</button>
+                <div class="theme-indicator" id="themeIndicator"></div>
             </div>
 
-            <!-- BACK FACE -->
-            <div class="face face-back">
-                <div class="back-header">
-                    <div class="back-title">Loop Selection</div>
-                    <div class="back-subtitle">Long-press to favorite ★</div>
+            <!-- SCREEN 2: TRACK LIST -->
+            <div class="screen screen-tracklist">
+                <div class="track-list-header">
+                    <div class="track-list-title">Track Selection</div>
+                    <div class="track-list-subtitle">Double-tap to favorite ★</div>
                 </div>
 
                 <div class="tabs">
@@ -642,30 +701,49 @@
 
                 <div class="loop-grid" id="loopGrid">
                     <div class="empty-state">
-                        Load audio files below
+                        ← Swipe to load files
                     </div>
                 </div>
-
-                <div class="file-upload-section">
-                    <div class="dropzone" id="dropzone">
-                        <div class="dropzone-icon">📁</div>
-                        <div class="dropzone-text">LOAD FILES</div>
-                    </div>
-                    <input type="file" id="fileInput" accept="audio/mp3,audio/mpeg" multiple>
-                    <div class="file-list-section" id="fileListSection"></div>
-                    <div class="file-count" id="fileCount"></div>
-                </div>
-
-                <div class="color-themes">
-                    <div class="color-dot sage active" data-theme="sage" title="Sage"></div>
-                    <div class="color-dot gray" data-theme="gray" title="Gray"></div>
-                    <div class="color-dot cream" data-theme="cream" title="Cream"></div>
-                    <div class="color-dot blue" data-theme="blue" title="Blue"></div>
-                    <div class="color-dot rose" data-theme="rose" title="Rose"></div>
-                </div>
-
-                <button class="flip-button" id="flipToFront" title="Back">✕</button>
             </div>
+
+            <!-- SCREEN 3: LOAD FILES -->
+            <div class="screen screen-load">
+                <div class="load-header">
+                    <div class="load-title">Load Files</div>
+                </div>
+
+                <div class="file-section">
+                    <div class="file-upload-section">
+                        <div class="dropzone" id="dropzone">
+                            <div class="dropzone-icon">📁</div>
+                            <div class="dropzone-text">LOAD FILES</div>
+                        </div>
+                        <input type="file" id="fileInput" accept="audio/mp3,audio/mpeg" multiple>
+                    </div>
+
+                    <div class="file-count" id="fileCount"></div>
+
+                    <div class="file-list-section" id="fileListSection"></div>
+
+                    <div class="color-themes">
+                        <div class="color-dot sage active" data-theme="sage" title="Sage"></div>
+                        <div class="color-dot gray" data-theme="gray" title="Gray"></div>
+                        <div class="color-dot cream" data-theme="cream" title="Cream"></div>
+                        <div class="color-dot blue" data-theme="blue" title="Blue"></div>
+                        <div class="color-dot rose" data-theme="rose" title="Rose"></div>
+                        <div class="color-dot lavender" data-theme="lavender" title="Lavender"></div>
+                        <div class="color-dot charcoal" data-theme="charcoal" title="Charcoal"></div>
+                        <div class="color-dot amber" data-theme="amber" title="Amber"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Dots -->
+        <div class="nav-dots">
+            <div class="nav-dot active" data-screen="0"></div>
+            <div class="nav-dot" data-screen="1"></div>
+            <div class="nav-dot" data-screen="2"></div>
         </div>
     </div>
 
@@ -680,17 +758,24 @@
                 this.favorites = new Set();
                 this.currentTab = 'all';
                 this.currentTheme = 'sage';
+                this.currentScreen = 0;
+                this.touchStartX = 0;
+                this.touchStartY = 0;
+                this.lastTapTime = 0;
+                this.lastTapTarget = null;
                 
                 this.loadSettings();
                 this.initializeElements();
                 this.createSpeakerGrill();
                 this.attachEventListeners();
+                this.loadLastTrack();
             }
 
             initializeElements() {
-                this.device = document.getElementById('device');
+                this.screensWrapper = document.getElementById('screensWrapper');
                 this.speakerArea = document.getElementById('speakerArea');
-                this.loopIndicator = document.getElementById('loopIndicator');
+                this.loopNumber = document.getElementById('loopNumber');
+                this.loopName = document.getElementById('loopName');
                 this.volumeSlider = document.getElementById('volumeSlider');
                 this.fileInput = document.getElementById('fileInput');
                 this.fileCount = document.getElementById('fileCount');
@@ -698,11 +783,10 @@
                 this.dragOverlay = document.getElementById('dragOverlay');
                 this.fileListSection = document.getElementById('fileListSection');
                 this.loopGrid = document.getElementById('loopGrid');
-                this.flipToBack = document.getElementById('flipToBack');
-                this.flipToFront = document.getElementById('flipToFront');
                 this.randomButton = document.getElementById('randomButton');
                 this.tabs = document.querySelectorAll('.tab');
                 this.colorDots = document.querySelectorAll('.color-dot');
+                this.navDots = document.querySelectorAll('.nav-dot');
             }
 
             createSpeakerGrill() {
@@ -715,7 +799,7 @@
                     { size: 40 }
                 ];
 
-                circles.forEach((circle, index) => {
+                circles.forEach((circle) => {
                     const el = document.createElement('div');
                     el.className = 'grill-circle';
                     el.style.width = circle.size + 'px';
@@ -742,8 +826,6 @@
                 document.body.addEventListener('dragleave', (e) => this.handleBodyDragLeave(e));
                 document.body.addEventListener('drop', (e) => this.handleBodyDrop(e));
                 
-                this.flipToBack.addEventListener('click', () => this.flip());
-                this.flipToFront.addEventListener('click', () => this.flip());
                 this.randomButton.addEventListener('click', () => this.randomLoop());
 
                 this.tabs.forEach(tab => {
@@ -753,12 +835,78 @@
                 this.colorDots.forEach(dot => {
                     dot.addEventListener('click', (e) => this.changeTheme(e.target.dataset.theme));
                 });
+
+                // Swipe navigation
+                this.screensWrapper.addEventListener('touchstart', (e) => this.handleTouchStart(e));
+                this.screensWrapper.addEventListener('touchmove', (e) => this.handleTouchMove(e));
+                this.screensWrapper.addEventListener('touchend', (e) => this.handleTouchEnd(e));
+
+                // Nav dots
+                this.navDots.forEach(dot => {
+                    dot.addEventListener('click', () => {
+                        const screen = parseInt(dot.dataset.screen);
+                        this.goToScreen(screen);
+                    });
+                });
                 
                 // Set initial volume
                 this.audio.volume = this.volumeSlider.value / 100;
                 
                 // Apply saved theme
                 this.applyTheme(this.currentTheme);
+
+                // Save current track when changed
+                this.audio.addEventListener('loadeddata', () => this.saveLastTrack());
+            }
+
+            handleTouchStart(e) {
+                this.touchStartX = e.touches[0].clientX;
+                this.touchStartY = e.touches[0].clientY;
+            }
+
+            handleTouchMove(e) {
+                // Prevent scrolling while swiping between screens
+                const touchX = e.touches[0].clientX;
+                const touchY = e.touches[0].clientY;
+                const deltaX = Math.abs(touchX - this.touchStartX);
+                const deltaY = Math.abs(touchY - this.touchStartY);
+                
+                if (deltaX > deltaY && deltaX > 10) {
+                    e.preventDefault();
+                }
+            }
+
+            handleTouchEnd(e) {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                const deltaX = touchEndX - this.touchStartX;
+                const deltaY = touchEndY - this.touchStartY;
+                
+                // Only swipe if horizontal movement is greater than vertical
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                    if (deltaX > 0 && this.currentScreen > 0) {
+                        // Swipe right - go to previous screen
+                        this.goToScreen(this.currentScreen - 1);
+                    } else if (deltaX < 0 && this.currentScreen < 2) {
+                        // Swipe left - go to next screen
+                        this.goToScreen(this.currentScreen + 1);
+                    }
+                }
+            }
+
+            goToScreen(screen) {
+                this.currentScreen = screen;
+                const offset = -screen * (100 / 3);
+                this.screensWrapper.style.transform = `translateX(${offset}%)`;
+                
+                // Update nav dots
+                this.navDots.forEach((dot, index) => {
+                    if (index === screen) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
             }
 
             handleBodyDragEnter(e) {
@@ -777,7 +925,6 @@
             handleBodyDragLeave(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                // Only hide if leaving the body element
                 if (e.target === document.body || e.target === this.dragOverlay) {
                     this.dragOverlay.classList.remove('active');
                 }
@@ -790,10 +937,6 @@
                 
                 const files = e.dataTransfer.files;
                 this.processFiles(files);
-            }
-
-            flip() {
-                this.device.classList.toggle('flipped');
             }
 
             handleFileUpload(event) {
@@ -829,10 +972,13 @@
                 this.updateFileDisplay();
                 this.renderLoopGrid();
                 
-                // Auto-select first loop
-                if (this.audioFiles.length > 0) {
+                // Auto-select first loop if none selected
+                if (this.audioFiles.length > 0 && this.currentIndex === -1) {
                     this.selectLoop(0);
                 }
+
+                // Go to track list
+                this.goToScreen(1);
             }
 
             updateFileDisplay() {
@@ -843,8 +989,8 @@
                     return;
                 }
                 
-                const displayFiles = this.audioFiles.slice(0, 5); // Show first 5
-                const remaining = this.audioFiles.length - 5;
+                const displayFiles = this.audioFiles.slice(0, 10);
+                const remaining = this.audioFiles.length - 10;
                 
                 this.fileListSection.innerHTML = displayFiles.map(file => `
                     <div class="file-item">
@@ -866,7 +1012,7 @@
                 if (filesToShow.length === 0) {
                     this.loopGrid.innerHTML = `
                         <div class="empty-state">
-                            ${this.currentTab === 'favorites' ? 'No favorites' : 'Load files below'}
+                            ${this.currentTab === 'favorites' ? 'No favorites yet' : '← Swipe to load files'}
                         </div>
                     `;
                     return;
@@ -880,30 +1026,24 @@
                     </div>
                 `).join('');
 
-                // Attach click handlers
+                // Attach click and double-tap handlers
                 this.loopGrid.querySelectorAll('.loop-tile').forEach(tile => {
                     tile.addEventListener('click', (e) => {
                         const id = parseInt(tile.dataset.id);
-                        this.selectLoop(id);
-                    });
-                    
-                    // Long press to favorite
-                    let pressTimer;
-                    tile.addEventListener('touchstart', (e) => {
-                        pressTimer = setTimeout(() => {
-                            const id = parseInt(tile.dataset.id);
+                        const now = Date.now();
+                        
+                        // Double-tap detection
+                        if (this.lastTapTarget === tile && now - this.lastTapTime < 300) {
+                            // Double tap - toggle favorite
                             this.toggleFavorite(id);
-                        }, 500);
-                    });
-                    tile.addEventListener('touchend', () => {
-                        clearTimeout(pressTimer);
-                    });
-                    
-                    // Right click to favorite (desktop)
-                    tile.addEventListener('contextmenu', (e) => {
-                        e.preventDefault();
-                        const id = parseInt(tile.dataset.id);
-                        this.toggleFavorite(id);
+                            this.lastTapTime = 0;
+                            this.lastTapTarget = null;
+                        } else {
+                            // Single tap - select loop
+                            this.selectLoop(id);
+                            this.lastTapTime = now;
+                            this.lastTapTarget = tile;
+                        }
                     });
                 });
             }
@@ -917,24 +1057,6 @@
                 if (this.isPlaying) {
                     this.audio.play();
                 }
-            }
-
-            randomLoop() {
-                if (this.audioFiles.length === 0) {
-                    return;
-                }
-                
-                // Get a random index different from current
-                let randomIndex;
-                if (this.audioFiles.length === 1) {
-                    randomIndex = 0;
-                } else {
-                    do {
-                        randomIndex = Math.floor(Math.random() * this.audioFiles.length);
-                    } while (randomIndex === this.currentIndex);
-                }
-                
-                this.selectLoop(randomIndex);
             }
 
             togglePlay() {
@@ -963,6 +1085,23 @@
                 this.renderLoopGrid();
             }
 
+            randomLoop() {
+                if (this.audioFiles.length === 0) {
+                    return;
+                }
+                
+                let randomIndex;
+                if (this.audioFiles.length === 1) {
+                    randomIndex = 0;
+                } else {
+                    do {
+                        randomIndex = Math.floor(Math.random() * this.audioFiles.length);
+                    } while (randomIndex === this.currentIndex);
+                }
+                
+                this.selectLoop(randomIndex);
+            }
+
             loadCurrentLoop() {
                 const wasPlaying = this.isPlaying;
                 this.audio.pause();
@@ -980,11 +1119,14 @@
 
             updateDisplay() {
                 if (this.currentIndex === -1) {
-                    this.loopIndicator.textContent = '--';
+                    this.loopNumber.textContent = '--';
+                    this.loopName.textContent = 'NO FILE LOADED';
                     return;
                 }
 
-                this.loopIndicator.textContent = (this.currentIndex + 1).toString().padStart(2, '0');
+                const file = this.audioFiles[this.currentIndex];
+                this.loopNumber.textContent = (file.id + 1).toString().padStart(2, '0');
+                this.loopName.textContent = file.name.toUpperCase();
             }
 
             switchTab(tab) {
@@ -1019,7 +1161,9 @@
             saveSettings() {
                 const settings = {
                     favorites: [...this.favorites],
-                    theme: this.currentTheme
+                    theme: this.currentTheme,
+                    lastTrack: this.currentIndex,
+                    volume: this.volumeSlider.value
                 };
                 localStorage.setItem('buddha-machine-settings', JSON.stringify(settings));
             }
@@ -1030,6 +1174,32 @@
                     const settings = JSON.parse(saved);
                     this.favorites = new Set(settings.favorites || []);
                     this.currentTheme = settings.theme || 'sage';
+                    if (settings.volume !== undefined) {
+                        this.volumeSlider.value = settings.volume;
+                    }
+                }
+            }
+
+            saveLastTrack() {
+                if (this.currentIndex !== -1) {
+                    const settings = JSON.parse(localStorage.getItem('buddha-machine-settings') || '{}');
+                    settings.lastTrack = this.currentIndex;
+                    localStorage.setItem('buddha-machine-settings', JSON.stringify(settings));
+                }
+            }
+
+            loadLastTrack() {
+                const saved = localStorage.getItem('buddha-machine-settings');
+                if (saved) {
+                    const settings = JSON.parse(saved);
+                    if (settings.lastTrack !== undefined && this.audioFiles.length > 0) {
+                        // Will load after files are loaded
+                        setTimeout(() => {
+                            if (settings.lastTrack < this.audioFiles.length) {
+                                this.selectLoop(settings.lastTrack);
+                            }
+                        }, 100);
+                    }
                 }
             }
         }
@@ -1061,16 +1231,13 @@
             ]
         };
 
-        // Create manifest blob and URL
         const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
         const manifestURL = URL.createObjectURL(manifestBlob);
         document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
 
-        // Service Worker
         if ('serviceWorker' in navigator) {
-            // Create service worker inline
             const swCode = `
-                const CACHE_NAME = 'buddha-machine-v1';
+                const CACHE_NAME = 'buddha-machine-v2';
                 
                 self.addEventListener('install', (event) => {
                     self.skipWaiting();
@@ -1099,7 +1266,6 @@
             });
         }
 
-        // Install prompt
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
