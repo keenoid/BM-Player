@@ -126,7 +126,6 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            margin: 0 10px;
         }
 
         /* SCREEN 1 - PLAYER */
@@ -201,53 +200,6 @@
                 transform: scale(1.08);
                 opacity: 0.85; 
             }
-        }
-
-        .volume-section {
-            margin-top: 20px;
-            padding: 20px 0;
-            padding-bottom: 60px;
-            border-top: 1px solid var(--color-mid);
-            opacity: 0.4;
-        }
-
-        .volume-label {
-            font-size: 11px;
-            color: var(--color-dark);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .volume-slider {
-            width: 100%;
-            -webkit-appearance: none;
-            appearance: none;
-            height: 4px;
-            border-radius: 2px;
-            background: var(--color-mid);
-            outline: none;
-            opacity: 0.6;
-        }
-
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--color-dark);
-            cursor: pointer;
-        }
-
-        .volume-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--color-dark);
-            cursor: pointer;
-            border: none;
         }
 
         .random-button {
@@ -347,8 +299,8 @@
 
         .loop-grid {
             flex: 1;
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            display: flex;
+            flex-direction: column;
             gap: 8px;
             overflow-y: auto;
             padding: 5px;
@@ -370,23 +322,21 @@
         }
 
         .loop-tile {
-            aspect-ratio: 1;
             background: var(--color-mid);
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            padding: 15px;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
-            padding: 6px;
             opacity: 0.5;
+            gap: 12px;
         }
 
         .loop-tile:hover {
             opacity: 0.8;
-            transform: scale(1.05);
+            transform: translateX(3px);
         }
 
         .loop-tile.active {
@@ -395,34 +345,27 @@
         }
 
         .loop-tile-number {
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 600;
             color: var(--color-light);
-            margin-bottom: 2px;
+            min-width: 35px;
+            text-align: right;
         }
 
         .loop-tile-name {
-            font-size: 8px;
+            font-size: 13px;
             color: var(--color-light);
-            text-align: center;
-            opacity: 0.7;
-            line-height: 1.1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            max-width: 100%;
+            flex: 1;
+            opacity: 0.9;
+            line-height: 1.3;
         }
 
         .loop-tile.favorited::after {
             content: '★';
-            position: absolute;
-            top: 3px;
-            right: 3px;
-            font-size: 10px;
+            font-size: 16px;
             color: var(--color-accent);
             filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+            margin-left: auto;
         }
 
         .loop-tile.active.favorited::after {
@@ -430,7 +373,6 @@
         }
 
         .empty-state {
-            grid-column: 1 / -1;
             text-align: center;
             padding: 40px 20px;
             color: var(--color-dark);
@@ -678,11 +620,6 @@
                     <div class="speaker-grill" id="speakerGrill"></div>
                 </div>
 
-                <div class="volume-section">
-                    <div class="volume-label">Volume</div>
-                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
-                </div>
-
                 <button class="random-button" id="randomButton" title="Random">🎲</button>
                 <div class="theme-indicator" id="themeIndicator"></div>
             </div>
@@ -776,7 +713,6 @@
                 this.speakerArea = document.getElementById('speakerArea');
                 this.loopNumber = document.getElementById('loopNumber');
                 this.loopName = document.getElementById('loopName');
-                this.volumeSlider = document.getElementById('volumeSlider');
                 this.fileInput = document.getElementById('fileInput');
                 this.fileCount = document.getElementById('fileCount');
                 this.dropzone = document.getElementById('dropzone');
@@ -814,7 +750,6 @@
 
             attachEventListeners() {
                 this.speakerArea.addEventListener('click', () => this.togglePlay());
-                this.volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
                 this.fileInput.addEventListener('change', (e) => this.handleFileUpload(e));
                 
                 // Small dropzone click
@@ -848,9 +783,6 @@
                         this.goToScreen(screen);
                     });
                 });
-                
-                // Set initial volume
-                this.audio.volume = this.volumeSlider.value / 100;
                 
                 // Apply saved theme
                 this.applyTheme(this.currentTheme);
@@ -1113,10 +1045,6 @@
                 }
             }
 
-            setVolume(value) {
-                this.audio.volume = value / 100;
-            }
-
             updateDisplay() {
                 if (this.currentIndex === -1) {
                     this.loopNumber.textContent = '--';
@@ -1162,8 +1090,7 @@
                 const settings = {
                     favorites: [...this.favorites],
                     theme: this.currentTheme,
-                    lastTrack: this.currentIndex,
-                    volume: this.volumeSlider.value
+                    lastTrack: this.currentIndex
                 };
                 localStorage.setItem('buddha-machine-settings', JSON.stringify(settings));
             }
@@ -1174,9 +1101,6 @@
                     const settings = JSON.parse(saved);
                     this.favorites = new Set(settings.favorites || []);
                     this.currentTheme = settings.theme || 'sage';
-                    if (settings.volume !== undefined) {
-                        this.volumeSlider.value = settings.volume;
-                    }
                 }
             }
 
